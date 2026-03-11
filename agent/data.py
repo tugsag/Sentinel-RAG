@@ -1,6 +1,9 @@
 from langchain_huggingface.embeddings import HuggingFaceEmbeddings
 from langchain_community.docstore.document import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from presidio_analyzer import AnalyzerEngine
+from presidio_anonymizer import AnonymizerEngine
+from presidio_anonymizer.entities import OperatorConfig
 import chromadb
 import pandas as pd
 
@@ -11,6 +14,15 @@ def read_sample_data(path: str) -> pd.DataFrame:
     return pd.read_csv(path)
 
 
+def anonymize_data(text: str) -> str:
+    analyzer = AnalyzerEngine()
+    res = analyzer.analyze(text, language='en') # look for all entity types
+
+    anonymizer = AnonymizerEngine()
+    anonymized = anonymizer.anonymize(text, analyzer_results=res)
+
+    return anonymized.text
+
 def split_data(data: pd.DataFrame, 
                topic_col: str = 'ki_topic', 
                text_col: str = 'ki_text') -> list[Document]:
@@ -19,10 +31,12 @@ def split_data(data: pd.DataFrame,
     for index, row in data.iterrows():
         # We include the topic in the text so the embedding "knows" the subject
         combined_content = f"Topic: {row[topic_col]}\nContent: {row[text_col]}"
+
+        anonymized_content = anonymize_data(combined_content)
         
         # Store the original topic in metadata for filtering later
         doc = Document(
-            page_content=combined_content,
+            page_content=anonymized_content,
             metadata={"topic": row[topic_col], "source_row": index}
         )
         docs.append(doc)
