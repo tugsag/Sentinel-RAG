@@ -1,4 +1,6 @@
-# Simple AI project that incorporates cybersecurity principles to protect against prompt injection and data leakage
+# Sentinel RAG
+
+## Simple AI project that incorporates cybersecurity principles to protect against prompt injection and data leakage
 
 
 List of tech and principles used
