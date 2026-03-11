@@ -1,0 +1,11 @@
+# A sample jailbreak checker that config looks for
+
+define flow check jailbreak
+  # 1. Execute the 'self_check_input' action
+  $allowed = execute self_check_input
+  
+  # 2. If the LLM says it's NOT allowed (jailbreak detected)
+  if not $allowed
+    bot refuse to respond
+        "I'm sorry, I can't answer that as it violates my security policies."
+    stop
