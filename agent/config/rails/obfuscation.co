@@ -1,0 +1,14 @@
+# A simple obfuscation checker
+
+define flow check obfuscation
+    $norm_input = execute normalize_input(user_input=$last_user_message)
+    $is_malicious = execute check_intent(text=$norm_input)
+
+    if $is_malicious
+        bot refuse to respond
+        stop
+
+    $allowed = execute self_check_input
+    if not $allowed
+        bot refuse to respond
+        stop

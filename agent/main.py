@@ -12,6 +12,7 @@ def main():
 
     rag_graph = create_rag_chain(collection)
     res = rag_graph.invoke(prompt)
+    print(res if isinstance(res, str) else res['output'])
 
 if __name__ == '__main__':
     main()

@@ -58,8 +58,21 @@ def prepare_vector_db(chunked_data: list[Document],
     return collection
 
 
+def check_collection(db_path: str, 
+                     collection_name: str) -> (chromadb.api.models.Collection.Collection, None):
+    client = chromadb.PersistentClient(db_path)
+    collection = client.get_or_create_collection(name=collection_name)
+    if collection.count() > 0:
+        return collection
+    else:
+        return None
+
 def prepare_data(data_path: str):
-    data = read_sample_data(data_path)
-    chunked_data = split_data(data)
-    embeddings = get_embeddings(chunked_data)
-    return prepare_vector_db(chunked_data, embeddings)
+    write_path, collection_name = "chroma/it_text", "coll"
+    collection = check_collection(write_path, collection_name)
+    if collection is None:
+        data = read_sample_data(data_path)
+        chunked_data = split_data(data)
+        embeddings = get_embeddings(chunked_data)
+        collection = prepare_vector_db(chunked_data, embeddings)
+    return collection

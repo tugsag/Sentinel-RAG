@@ -21,6 +21,7 @@ rails:
     flows:
       - self check input
       - check jailbreak
+      - check obfuscation
       - mask sensitive data on input
 
   output:
